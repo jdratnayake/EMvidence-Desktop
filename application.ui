@@ -114,22 +114,22 @@
     </property>
     <item>
      <property name="text">
-      <string>e6</string>
+      <string>MHz</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>e3</string>
+      <string>Hz</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>e9</string>
+      <string>kHz</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>1</string>
+      <string>GHz</string>
      </property>
     </item>
    </widget>

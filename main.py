@@ -12,6 +12,7 @@ class my_app(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         project_location = os.path.dirname(os.path.abspath(__file__))
+        self.project_location = project_location
         self.ui.path_text.setText(project_location)
 
         # self.setGeometry(400,150,500,500)
@@ -38,11 +39,21 @@ class my_app(QMainWindow):
         # print(cent_freq_value)
         cent_freq_scale = self.ui.cent_freq_scale.currentText()
         print(cent_freq_value+cent_freq_scale)
+        if cent_freq_scale == "Hz":
+            center_frequency = float(cent_freq_value)
+        elif cent_freq_scale == "kHz":
+            center_frequency = float(cent_freq_value)*1e3
+        elif cent_freq_scale == "MHz":
+            center_frequency = float(cent_freq_value)*1e6
+        elif cent_freq_scale == "MHz":
+            center_frequency = float(cent_freq_value)*1e9        
+        center_frequency = str(center_frequency)        
         time = self.ui.time.toPlainText()
         print(time)
 
+
         
-        args = ["python", "EM.py", "--samp_rate", samp_rate, "--cent_freq", cent_freq_value + cent_freq_scale, "--time", time,"--file",self.project_location]
+        args = ["python", "EM.py", "--samp_rate", samp_rate, "--cent_freq", center_frequency, "--time", time,"--file",self.project_location]
         print("Location: "+self.project_location)
         try:
             result = subprocess.run(args, capture_output=True, text=True, check=True)
