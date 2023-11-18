@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>495</width>
-    <height>445</height>
+    <height>508</height>
    </rect>
   </property>
   <property name="font">
@@ -215,7 +215,7 @@
     <property name="geometry">
      <rect>
       <x>200</x>
-      <y>350</y>
+      <y>340</y>
       <width>101</width>
       <height>41</height>
      </rect>
@@ -332,10 +332,131 @@
      </font>
     </property>
     <property name="text">
-     <string>Browse...</string>
+     <string>...</string>
     </property>
     <property name="default">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>390</y>
+      <width>118</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>0</number>
+    </property>
+    <property name="value">
+     <number>-1</number>
+    </property>
+    <property name="textVisible">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="tick">
+    <property name="geometry">
+     <rect>
+      <x>91</x>
+      <y>411</y>
+      <width>25</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>tick.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="successful_group">
+    <property name="geometry">
+     <rect>
+      <x>122</x>
+      <y>411</y>
+      <width>155</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Data Collected Successfully!</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="cross_1">
+    <property name="geometry">
+     <rect>
+      <x>91</x>
+      <y>441</y>
+      <width>22</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>cross.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="failed_group">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>442</y>
+      <width>123</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Data Collection Failed!</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="cross_2">
+    <property name="geometry">
+     <rect>
+      <x>261</x>
+      <y>441</y>
+      <width>22</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>cross.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="failed_group_hackrf">
+    <property name="geometry">
+     <rect>
+      <x>289</x>
+      <y>441</y>
+      <width>149</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Hack RF connection Failed!</string>
     </property>
    </widget>
   </widget>
