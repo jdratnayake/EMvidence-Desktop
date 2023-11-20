@@ -1,11 +1,12 @@
 import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QRegExpValidator,QValidator, QPalette, QColor, QTextCursor
+
 from application import Ui_MainWindow
 import subprocess
 import os
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, QRegExp,Qt
 
 class WorkerThread(QThread):
     progress_updated = pyqtSignal(int)
@@ -46,9 +47,83 @@ class my_app(QMainWindow):
         self.ui.tick.setVisible(False)
         self.ui.cross_1.setVisible(False)
         self.ui.cross_2.setVisible(False)
+        
+        self.ui.error_label_freq.setStyleSheet("color: red;")
+        self.ui.error_label_freq.setVisible(False)
+        self.ui.error_label_time.setStyleSheet("color: red;")
+        self.ui.error_label_time.setVisible(False)
+        self.validation()
+        self.ui.button1.setEnabled(False)
+        self.freq_value_flag = False
+        self.time_value_flag = False
 
         self.ui.button1.clicked.connect(self.collect_data)
         self.ui.path_button.clicked.connect(self.path_specify)
+
+    def validation(self):
+        validator_number = QRegExpValidator(QRegExp(r'[0-9]+'))
+        self.ui.cent_freq_value.textChanged.connect(lambda: self.validate_num(self.ui.cent_freq_value,validator_number,"freq_value_flag"))
+        self.ui.time.textChanged.connect(lambda: self.validate_num(self.ui.time,validator_number,"time_value_flag"))
+
+    def validate_num(self, text_edit, validator,flag_value):
+        print(flag_value)
+        cursor = text_edit.textCursor()
+        cursor.movePosition(cursor.StartOfBlock,cursor.KeepAnchor)
+        selected_text = text_edit.toPlainText()
+
+        pos = 0
+        state = validator.validate(selected_text,pos)[0]
+
+        if state == QValidator.Acceptable:
+            print("Input is valid.")
+            self.check_enable_button(flag_value,text_edit)
+            # self.check_enable_button()
+        elif state == QValidator.Intermediate:
+            print("Input is empty.")
+            self.ui.button1.setEnabled(False)
+            self.error_input_validation(text_edit,flag_value,"empty")
+
+        elif state == QValidator.Invalid:
+            print("Input is invalid.")
+            self.ui.button1.setEnabled(False)
+            self.error_input_validation(text_edit,flag_value,"invalid")
+
+    def error_input_validation(self,text_edit,flag_value,error_type):
+        # Set the border color to red
+        border_color = QColor(255, 0, 0)
+        style_sheet = f"QTextEdit{{border: 1px solid {border_color.name()};}}"
+        text_edit.setStyleSheet(style_sheet)
+        if flag_value == "freq_value_flag":
+            if error_type == "invalid":
+                self.ui.error_label_freq.setVisible(True)
+            elif error_type == "empty":
+                self.ui.error_label_freq.setText("Please enter a value for Center Frequency")
+                self.ui.error_label_freq.setVisible(True)    
+        elif flag_value == "time_value_flag":
+            if error_type == "invalid":
+                self.ui.error_label_time.setVisible(True)
+            elif error_type == "empty":
+                self.ui.error_label_time.setText("Please enter a value for Time Duration")
+                self.ui.error_label_time.setVisible(True)
+
+    
+    def check_enable_button(self,flag_value,text_edit):
+        # Things needed to be validated
+        # self.ui.cent_freq_value
+        # self.ui.time
+        style_sheet_none = "QTextEdit{border: none;}"
+        text_edit.setStyleSheet(style_sheet_none)
+        if flag_value == "freq_value_flag": 
+            self.freq_value_flag = True
+            self.ui.error_label_freq.setVisible(False)
+            if self.time_value_flag == True:
+               self.ui.button1.setEnabled(True)
+               
+        elif flag_value == "time_value_flag":
+            self.time_value_flag = True
+            self.ui.error_label_time.setVisible(False)
+            if self.freq_value_flag == True:
+                self.ui.button1.setEnabled(True)       
 
     def thread_function(self):
         print("Threading running")
@@ -63,7 +138,7 @@ class my_app(QMainWindow):
 
     def center_frequency_conversion(self, cent_freq_value, cent_freq_scale):
         if cent_freq_scale == "Hz":
-            return float(self.cent_freq_value)
+            return float(cent_freq_value)
         elif cent_freq_scale == "kHz":
             return float(cent_freq_value) * 1e3
         elif cent_freq_scale == "MHz":
