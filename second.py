@@ -7,6 +7,7 @@ from application import Ui_MainWindow
 import subprocess
 import os
 from PyQt5.QtCore import QThread, pyqtSignal, QRegExp,Qt
+import osmosdr
 
 class WorkerThread(QThread):
     progress_updated = pyqtSignal(int)
@@ -17,20 +18,36 @@ class WorkerThread(QThread):
 
     def run(self):
         try:
+            if not self.check_hackrf():
+                raise ValueError("HackRF not found")
             result = subprocess.run(self.args, capture_output=True, text=True, check=True)
             print("Subprocess output:")
             print(result.stdout)
-            self.progress_updated.emit(100)  # Signal completion
+            self.progress_updated.emit(100)
+              # Signal completion
+        except ValueError as ve:
+            self.progress_updated.emit(-1)
+            print(f"Error: {ve}")   
         except subprocess.CalledProcessError as e:
             print(f"Subprocess failed with return code {e.returncode}")
 
             if e.returncode == 3221225477:
                 # Handle hackrf error
-                self.progress_updated.emit(-1)  # Signal hackrf error
+                self.progress_updated.emit(-1)
+                print(e.stderr)  # Signal hackrf error
             else:
                 print("Error output:")
                 print(e.stderr)
                 self.progress_updated.emit(-2)  # Signal other error
+
+
+    def check_hackrf(self):
+        available_devices = osmosdr.source().get_gain_names()
+        if 'RF' in available_devices:
+            return True
+        else:
+            return False
+        # print(available_devices)             
 
 class my_app(QMainWindow):
     def __init__(self):
@@ -47,6 +64,7 @@ class my_app(QMainWindow):
         self.ui.tick.setVisible(False)
         self.ui.cross_1.setVisible(False)
         self.ui.cross_2.setVisible(False)
+        self.ui.file_name.setPlainText("signal.cfile")
         
         self.ui.error_label_freq.setStyleSheet("color: red;")
         self.ui.error_label_freq.setVisible(False)
@@ -180,11 +198,19 @@ class my_app(QMainWindow):
         center_frequency = str(center_frequency)
         time_value = self.ui.time.toPlainText()
 
-        args = ["python", "EM.py", "--samp_rate", samp_rate, "--cent_freq", center_frequency, "--time", time_value, "--file", self.project_location]
+        path = self.ui.path_text.text()
+        path = os.path.abspath(path)
+        file_name = self.ui.file_name.toPlainText()
+        full_path = os.path.join(path, file_name)
+        print("File path: "+full_path)
+
+        args = ["python", "EM.py", "--samp_rate", samp_rate, "--cent_freq", center_frequency, "--time", time_value, "--file", full_path]
 
         self.worker_thread = WorkerThread(args)
         self.worker_thread.progress_updated.connect(self.update_progress_bar)
         self.worker_thread.start()
+
+    
 
     def update_progress_bar(self, value):
         if value == -1:

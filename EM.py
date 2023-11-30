@@ -36,6 +36,7 @@ from gnuradio import eng_notation
 import osmosdr
 import time
 import argparse
+import os
 
 
 
@@ -186,6 +187,19 @@ class EM(gr.top_block, Qt.QWidget):
 
 # Time period variable
 # time_period = 10000
+# def check_hackrf():
+#     available_devices = osmosdr.source().get_gain_names()
+#     print(available_devices)
+
+def check_hackrf_connection():
+    # Try to create an osmosdr source block for the HackRF
+    try:
+        source = osmosdr.source_c()
+        source.set_device("hackrf")
+        source.get_device_info()  # This will throw an exception if the device is not found
+        print("HackRF One is connected.")
+    except RuntimeError as e:
+        print(f"HackRF One is not connected: {e}")
 
 def main(top_block_cls=EM, options=None):
 
@@ -210,6 +224,10 @@ def main(top_block_cls=EM, options=None):
     print("Center Frequency: "+args.cent_freq)
     print("Time duration of capture: "+args.time)
     print("Output file name: "+args.file)
+
+    # if not check_hackrf():
+    #     sys.exit(3221225477)
+  
     tb = top_block_cls(samp_rate=float(args.samp_rate),cent_freq=float(args.cent_freq),file=args.file)
 
     tb.start()
