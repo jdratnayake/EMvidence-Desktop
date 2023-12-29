@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PyQt5.QtGui import QIcon, QRegExpValidator,QValidator, QPalette, QColor, QTextCursor
 
 from application import Ui_MainWindow
-from EM2 import main as em_main
 import subprocess
 import os
 from PyQt5.QtCore import QThread, pyqtSignal, QRegExp,Qt
@@ -13,23 +12,15 @@ import osmosdr
 class WorkerThread(QThread):
     progress_updated = pyqtSignal(int)
 
-    def __init__(self, samp_rate, cent_freq, time, file):
+    def __init__(self, args):
         super(WorkerThread, self).__init__()
-        self.samp_rate = samp_rate
-        self.cent_freq = cent_freq
-        self.time = time
-        self.file = file
-        
-
-    
+        self.args = args
 
     def run(self):
         try:
-
             if not self.check_hackrf():
                 raise ValueError("HackRF not found")
-            # result = subprocess.run(self.args, capture_output=True, text=True, check=True)
-            result = em_main(samp_rate=self.samp_rate, cent_freq=self.cent_freq, time=self.time, file=self.file)
+            result = subprocess.run(self.args, capture_output=True, text=True, check=True)
             print("Subprocess output:")
             print(result.stdout)
             self.progress_updated.emit(100)
@@ -84,7 +75,6 @@ class my_app(QMainWindow):
         self.freq_value_flag = False
         self.time_value_flag = False
 
-        self.ui.button1.clicked.connect(self.initiate_progress_bar)
         self.ui.button1.clicked.connect(self.collect_data)
         self.ui.path_button.clicked.connect(self.path_specify)
 
@@ -153,7 +143,10 @@ class my_app(QMainWindow):
             if self.freq_value_flag == True:
                 self.ui.button1.setEnabled(True)       
 
-    
+    def thread_function(self):
+        print("Threading running")
+        self.ui.progressBar.setVisible(True)
+
     def path_specify(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Directory: ", self.ui.path_text.text())
         if folder_path:
@@ -194,13 +187,10 @@ class my_app(QMainWindow):
         self.ui.cross_1.setVisible(True)
         self.ui.progressBar.setVisible(False)
 
-    def initiate_progress_bar(self):
+    def collect_data(self):
         self.ui.progressBar.setValue(0)  # Reset progress bar
         self.ui.progressBar.setVisible(True)
 
-
-    def collect_data(self):
-        # self.initiate_progress_bar()        
         samp_rate = self.ui.samp_rate.currentText()
         cent_freq_value = self.ui.cent_freq_value.toPlainText()
         cent_freq_scale = self.ui.cent_freq_scale.currentText()
@@ -212,15 +202,13 @@ class my_app(QMainWindow):
         path = os.path.abspath(path)
         file_name = self.ui.file_name.toPlainText()
         full_path = os.path.join(path, file_name)
-        # print("File path: "+full_path)
+        print("File path: "+full_path)
 
-        # args = ["python", "EM.py", "--samp_rate", samp_rate, "--cent_freq", center_frequency, "--time", time_value, "--file", full_path]
+        args = ["python", "EM.py", "--samp_rate", samp_rate, "--cent_freq", center_frequency, "--time", time_value, "--file", full_path]
 
-
-        self.worker_thread = WorkerThread(samp_rate=samp_rate, cent_freq=center_frequency, time=time_value, file=full_path)
+        self.worker_thread = WorkerThread(args)
         self.worker_thread.progress_updated.connect(self.update_progress_bar)
         self.worker_thread.start()
-        
 
     
 
