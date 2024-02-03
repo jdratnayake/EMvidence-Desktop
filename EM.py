@@ -12,9 +12,9 @@
 from packaging import version as packaging_version
 
 if __name__ == '__main__':
-    import ctypes
     import sys
     if sys.platform.startswith('linux'):
+        import ctypes
         try:
             x11 = ctypes.cdll.LoadLibrary('libX11.so')
             x11.XInitThreads()

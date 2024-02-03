@@ -47,6 +47,7 @@ class EM(gr.top_block, Qt.QWidget):
     def __init__(self,samp_rate, cent_freq,file):
         # self.samp_rate = samp_rate
         # self.cent_freq = cent_freq
+        print("Inside EM")
         gr.top_block.__init__(self, "EM", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("EM")
@@ -193,42 +194,29 @@ class EM(gr.top_block, Qt.QWidget):
 
 def check_hackrf_connection():
     # Try to create an osmosdr source block for the HackRF
-    try:
-        source = osmosdr.source_c()
-        source.set_device("hackrf")
-        source.get_device_info()  # This will throw an exception if the device is not found
-        print("HackRF One is connected.")
-    except RuntimeError as e:
-        print(f"HackRF One is not connected: {e}")
+    source = osmosdr.source().get_gain_names()
+    if 'RF' in source:
+        return True
+    else:
+        print("NO HACKRF ONE::")
+        return False
 
-def main(top_block_cls=EM, options=None,samp_rate='20e6',cent_freq='288e6',time='10',file='env_signals.cfile'):
-
-    # parser = argparse.ArgumentParser(description='Preprocess data.')
-    # parser.add_argument('--samp_rate', type=str, default='20e6',
-    #                     help='Sampling rate')
-    # parser.add_argument('--cent_freq', type=str, default='288e6',
-    #                     help='Center Frequency')
-    # parser.add_argument('--time', type=str, default='10',
-    #                     help='Time duration of capture')
-    # parser.add_argument('--file', type=str, default='env_signals.cfile',
-    #                     help='output file name')
-    # args = parser.parse_args()
-
-    # if packaging_version.parse("4.5.0") <= packaging_version.parse(Qt.qVersion()) < packaging_version.parse("5.0.0"):
-    #     style = gr.prefs().get_string('qtgui', 'style', 'raster')
-    #     Qt.QApplication.setGraphicsSystem(style)
-    # qapp = Qt.QApplication(sys.argv)
+def main(top_block_cls=EM, samp_rate='20e6',cent_freq='288e6',time='10',file='env_signals.cfile'):
 
     
+
+    print("Inside File 2")
     print("Sampling rate: "+samp_rate)
     print("Center Frequency: "+cent_freq)
     print("Time duration of capture: "+time)
     print("Output file name: "+file)
 
-    # if not check_hackrf():
-    #     sys.exit(3221225477)
-  
+    qapp = Qt.QApplication(sys.argv)
+
+    if not check_hackrf_connection():
+        return "No Hack RF"
     tb = top_block_cls(samp_rate=float(samp_rate),cent_freq=float(cent_freq),file=file)
+    
 
     tb.start()
 
@@ -237,16 +225,22 @@ def main(top_block_cls=EM, options=None,samp_rate='20e6',cent_freq='288e6',time=
     
     def sig_handler(sig=None, frame=None):
         tb.stop()
-        tb.wait()
+        tb.wait()   
 
-        Qt.QApplication.quit()
+    Qt.QApplication.quit()
 
-    signal.signal(signal.SIGINT, sig_handler)
-    signal.signal(signal.SIGTERM, sig_handler)
+    # Additional cleanup if needed
+    # sys.exit(0)
+
+    print("Before signal")
+    # signal.signal(signal.SIGINT, sig_handler)
+    # signal.signal(signal.SIGTERM, sig_handler)
 
     timer = Qt.QTimer()
     timer.timeout.connect(lambda: sig_handler())
     timer.start(int(time) * 1000)
+
+    
     
     # stop_thread = threading.Thread(target=stop_after_duration,args=(tb,))
     # stop_thread.start()

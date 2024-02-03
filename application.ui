@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>495</width>
-    <height>615</height>
+    <width>584</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="font">
@@ -80,9 +80,9 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>10</x>
       <y>100</y>
-      <width>111</width>
+      <width>151</width>
       <height>31</height>
      </rect>
     </property>
@@ -160,9 +160,9 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>170</y>
-      <width>101</width>
+      <x>10</x>
+      <y>160</y>
+      <width>141</width>
       <height>31</height>
      </rect>
     </property>
@@ -220,9 +220,9 @@
    <widget class="QPushButton" name="button1">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>170</x>
       <y>340</y>
-      <width>101</width>
+      <width>181</width>
       <height>41</height>
      </rect>
     </property>
@@ -246,7 +246,7 @@
      <rect>
       <x>10</x>
       <y>0</y>
-      <width>431</width>
+      <width>471</width>
       <height>31</height>
      </rect>
     </property>
@@ -263,9 +263,9 @@
    <widget class="QLabel" name="label_samp_rate">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>10</x>
       <y>40</y>
-      <width>101</width>
+      <width>141</width>
       <height>31</height>
      </rect>
     </property>
@@ -284,9 +284,9 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>10</x>
       <y>290</y>
-      <width>121</width>
+      <width>161</width>
       <height>21</height>
      </rect>
     </property>
@@ -347,9 +347,9 @@
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>170</x>
       <y>390</y>
-      <width>118</width>
+      <width>181</width>
       <height>23</height>
      </rect>
     </property>
@@ -418,7 +418,7 @@
      <rect>
       <x>120</x>
       <y>440</y>
-      <width>331</width>
+      <width>361</width>
       <height>31</height>
      </rect>
     </property>
@@ -508,10 +508,10 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>240</y>
-      <width>101</width>
-      <height>16</height>
+      <x>10</x>
+      <y>230</y>
+      <width>141</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="font">
@@ -547,7 +547,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>495</width>
+     <width>584</width>
      <height>21</height>
     </rect>
    </property>

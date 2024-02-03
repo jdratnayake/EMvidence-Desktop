@@ -4,54 +4,65 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PyQt5.QtGui import QIcon, QRegExpValidator,QValidator, QPalette, QColor, QTextCursor
 
 from application import Ui_MainWindow
-from EM2 import main as em_main
 import subprocess
 import os
 from PyQt5.QtCore import QThread, pyqtSignal, QRegExp,Qt
 import osmosdr
-import asyncio
+
+
 
 class WorkerThread(QThread):
-    progress_bar = pyqtSignal(int)
     progress_updated = pyqtSignal(int)
 
-    def __init__(self, samp_rate, cent_freq, time, file):
+    def __init__(self, args):
         super(WorkerThread, self).__init__()
-        self.samp_rate = samp_rate
-        self.cent_freq = cent_freq
-        self.time = time
-        self.file = file
-        
-
-    
+        self.args = args
 
     def run(self):
-        self.progress_bar.emit(1)
-        result = em_main(samp_rate="20e6", cent_freq="100e6", time="3", file="signal.cfile")
-            
-        print(result)
-        if result == "No Hack RF":
+        try:
+            if not self.check_hackrf():
+                raise ValueError("HackRF not found")
+            result = subprocess.run(self.args, capture_output=True, text=True, check=True)
+            print("Subprocess output:")
+            print(result.stdout)
+            self.progress_updated.emit(100)
+              # Signal completion
+        except ValueError as ve:
             self.progress_updated.emit(-1)
-        elif result == "Error":
-            self.progress_updated.emit(-2)
-        else:
-            self.progress_updated.emit(200)    
+            print(f"Error: {ve}")   
+        except subprocess.CalledProcessError as e:
+            print(f"Subprocess failed with return code {e.returncode}")
+
+            if e.returncode == 3221225477:
+                # Handle hackrf error
+                self.progress_updated.emit(-1)
+                print(e.stderr)  # Signal hackrf error
+            else:
+                print("Error output:")
+                print(e.stderr)
+                self.progress_updated.emit(-2)  # Signal other error
 
 
     def check_hackrf(self):
-        available_devices = osmosdr.source().get_gain_names()
-        if 'RF' in available_devices:
-            return True
-        else:
-            return False
-        # print(available_devices)             
+        
+        try:
+            print("Ckecking if Hack RF is connected")
+            available_devices = osmosdr.source().get_gain_names()
+            if 'RF' in available_devices:
+                return True
+            else:
+                return False
+            # print(available_devices)
+        except RuntimeError as e:
+            print("No Supported device found")
+            return False                 
 
 class my_app(QMainWindow):
-    def __init__(self):
+    def __init__(self):    
         super(my_app, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        project_location = os.path.dirname(os.path.abspath(__file__))
+        project_location = os.path.dirname(sys.executable)
         self.project_location = project_location
         self.ui.path_text.setText(project_location)
         self.ui.progressBar.setVisible(False)
@@ -72,7 +83,6 @@ class my_app(QMainWindow):
         self.freq_value_flag = False
         self.time_value_flag = False
 
-        # self.ui.button1.clicked.connect(self.initiate_progress_bar)
         self.ui.button1.clicked.connect(self.collect_data)
         self.ui.path_button.clicked.connect(self.path_specify)
 
@@ -141,7 +151,10 @@ class my_app(QMainWindow):
             if self.freq_value_flag == True:
                 self.ui.button1.setEnabled(True)       
 
-    
+    def thread_function(self):
+        print("Threading running")
+        self.ui.progressBar.setVisible(True)
+
     def path_specify(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Directory: ", self.ui.path_text.text())
         if folder_path:
@@ -182,17 +195,9 @@ class my_app(QMainWindow):
         self.ui.cross_1.setVisible(True)
         self.ui.progressBar.setVisible(False)
 
-    def initiate_progress_bar(self,value):
-        if value == 1:
-            self.ui.progressBar.setValue(0)  # Reset progress bar
-            self.ui.progressBar.setVisible(True)
-
-
-
-
     def collect_data(self):
-        # self.ui.progressBar.setValue(0)  # Reset progress bar
-        # self.ui.progressBar.setVisible(True)
+        self.ui.progressBar.setValue(0)  # Reset progress bar
+        self.ui.progressBar.setVisible(True)
 
         samp_rate = self.ui.samp_rate.currentText()
         cent_freq_value = self.ui.cent_freq_value.toPlainText()
@@ -205,23 +210,19 @@ class my_app(QMainWindow):
         path = os.path.abspath(path)
         file_name = self.ui.file_name.toPlainText()
         full_path = os.path.join(path, file_name)
+        print("File path: "+full_path)
+        if sys.version_info.major == 2:
+            pythonVar = "python3"
+        elif sys.version_info.major == 3:
+            pythonVar = "python"
 
-        self.worker_thread = WorkerThread(samp_rate,center_frequency,time_value,full_path)
-        self.worker_thread.progress_bar.connect(self.initiate_progress_bar)
+        args = [pythonVar, "EM.py", "--samp_rate", samp_rate, "--cent_freq", center_frequency, "--time", time_value, "--file", full_path]
+
+        self.worker_thread = WorkerThread(args)
         self.worker_thread.progress_updated.connect(self.update_progress_bar)
         self.worker_thread.start()
-            
-   
-            
-        
 
     
-    def check_hackrf(self):
-        available_devices = osmosdr.source().get_gain_names()
-        if 'RF' in available_devices:
-            return True
-        else:
-            return False
 
     def update_progress_bar(self, value):
         if value == -1:
@@ -231,9 +232,8 @@ class my_app(QMainWindow):
         else:
             self.handle_success()
 
-          
-
 if __name__ == "__main__":
+    os.chdir(sys._MEIPASS)
     app = QApplication(sys.argv)
     win = my_app()
     win.show()
