@@ -151,9 +151,22 @@ class MyApp(QMainWindow):
         msg.setText(message)
         msg.exec_()
 
-    def collect_data(self):
+    def get_sampling_rate(self,index):
+        switch = {
+            0: 20e6,
+            1: 8e6,
+            2: 10e6,
+            3: 12.5e6,
+            4: 16e6
+        }
+        return switch.get(index,None)
 
-        samp_rate = self.ui.samp_rate.currentText()
+
+    def collect_data(self):
+        samp_rate_index = self.ui.samp_rate.currentIndex()
+        samp_rate = self.get_sampling_rate(samp_rate_index)
+        print("Sampling rate: ")
+        print(samp_rate)
         cent_freq_value = self.ui.cent_freq_value.toPlainText()
         cent_freq_scale = self.ui.cent_freq_scale.currentText()
         center_frequency = self.center_frequency_conversion(cent_freq_value, cent_freq_scale)
