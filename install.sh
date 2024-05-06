@@ -16,3 +16,9 @@ else
 	echo "GNU Radio already installed!"    
 fi
 
+if ! isInstalled gr-osmosdr;
+then
+    sudo apt-get install gr-osmosdr
+else 
+	echo "osmosdr already installed!"    
+fi
