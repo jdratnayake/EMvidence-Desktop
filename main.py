@@ -127,10 +127,10 @@ class MyApp(QMainWindow):
         text_edit.setStyleSheet("QTextEdit{border: 1px solid red;}")
         if flag_value == "freq_value_flag":
             self.ui.error_label_freq.setVisible(True)
-            self.ui.error_label_freq.setText("Please enter a value for Center Frequency" if error_type == "empty" else "")
+            self.ui.error_label_freq.setText("Please enter a value for Center Frequency" if error_type == "empty" else "Enter a valid number for center frequency")
         elif flag_value == "time_value_flag":
             self.ui.error_label_time.setVisible(True)
-            self.ui.error_label_time.setText("Please enter a value for Time Duration" if error_type == "empty" else "")
+            self.ui.error_label_time.setText("Please enter a value for Time Duration" if error_type == "empty" else "Enter a valid number for time duration")
 
     def check_enable_button(self, flag_value, text_edit):
         text_edit.setStyleSheet("QTextEdit{border: none;}")

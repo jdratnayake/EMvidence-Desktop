@@ -247,7 +247,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Emvidence"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "EMvidence"))
         self.samp_rate.setItemText(0, _translate("MainWindow", "20 MHz"))
         self.samp_rate.setItemText(1, _translate("MainWindow", "8 MHz"))
         self.samp_rate.setItemText(2, _translate("MainWindow", "10 MHz"))
@@ -261,7 +261,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Time duration: "))
         self.label_3.setText(_translate("MainWindow", "Seconds"))
         self.button1.setText(_translate("MainWindow", "Collect Data"))
-        self.label_4.setText(_translate("MainWindow", "EMvidence Data Collection: "))
+        self.label_4.setText(_translate("MainWindow", "EMvidence Data Acquisition: "))
         self.label_samp_rate.setText(_translate("MainWindow", "Sampling Rate: "))
         self.label_5.setText(_translate("MainWindow", "Destination Folder:"))
         self.path_button.setText(_translate("MainWindow", "..."))
