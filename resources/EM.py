@@ -140,10 +140,6 @@ class EM(gr.top_block, Qt.QWidget):
         self.osmosdr_source_0.set_bb_gain(20, 0)
         self.osmosdr_source_0.set_antenna('', 0)
         self.osmosdr_source_0.set_bandwidth(0, 0)
-       
-
-
-
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, self.file, False)
         self.blocks_file_sink_0.set_unbuffered(False)
 
@@ -206,18 +202,19 @@ def check_hackrf_connection():
     except RuntimeError as e:
         print(f"HackRF One is not connected: {e}")
 
-def main(top_block_cls=EM, options=None):
 
-    parser = argparse.ArgumentParser(description='Preprocess data.')
-    parser.add_argument('--samp_rate', type=str, default='20e6',
-                        help='Sampling rate')
-    parser.add_argument('--cent_freq', type=str, default='288e6',
-                        help='Center Frequency')
-    parser.add_argument('--time', type=str, default='10',
-                        help='Time duration of capture')
-    parser.add_argument('--file', type=str, default='env_signals.cfile',
-                        help='output file name')
-    args = parser.parse_args()
+def main(samp_rate, cent_freq, time_value, full_path, top_block_cls=EM, options=None):
+
+    # parser = argparse.ArgumentParser(description='Preprocess data.')
+    # parser.add_argument('--samp_rate', type=str, default='20e6',
+    #                     help='Sampling rate')
+    # parser.add_argument('--cent_freq', type=str, default='288e6',
+    #                     help='Center Frequency')
+    # parser.add_argument('--time', type=str, default='10',
+    #                     help='Time duration of capture')
+    # parser.add_argument('--file', type=str, default='env_signals.cfile',
+    #                     help='output file name')
+    # args = parser.parse_args()
 
     if packaging_version.parse("4.5.0") <= packaging_version.parse(Qt.qVersion()) < packaging_version.parse("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
@@ -225,15 +222,15 @@ def main(top_block_cls=EM, options=None):
     qapp = Qt.QApplication(sys.argv)
 
     
-    print("Sampling rate: "+args.samp_rate)
-    print("Center Frequency: "+args.cent_freq)
-    print("Time duration of capture: "+args.time)
-    print("Output file name: "+args.file)
+    # print("Sampling rate: "+args.samp_rate)
+    # print("Center Frequency: "+args.cent_freq)
+    # print("Time duration of capture: "+args.time)
+    # print("Output file name: "+args.file)
 
     # if not check_hackrf():
     #     sys.exit(3221225477)
   
-    tb = top_block_cls(samp_rate=float(args.samp_rate),cent_freq=float(args.cent_freq),file=args.file)
+    tb = top_block_cls(samp_rate=float(samp_rate),cent_freq=float(cent_freq),file=full_path)
 
     tb.start()
 
@@ -250,8 +247,11 @@ def main(top_block_cls=EM, options=None):
     signal.signal(signal.SIGTERM, sig_handler)
 
     timer = Qt.QTimer()
-    timer.start(int(args.time) * 1000)
     timer.timeout.connect(lambda: sig_handler())
+    timer.start(int(time_value) * 1000)
+    
+    # stop_thread = threading.Thread(target=stop_after_duration,args=(tb,))
+    # stop_thread.start()
 
     qapp.exec_()
     
