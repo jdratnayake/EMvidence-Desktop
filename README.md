@@ -23,6 +23,7 @@
 
 2. **Installation:**
    - Clone this repository using git.
+   - Run the `install.sh` file.
 
 3. **Executing the Application:**
    - Run either the `run.sh` file or execute `Python3 main.py`.
