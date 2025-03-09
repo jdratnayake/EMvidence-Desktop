@@ -1,31 +1,53 @@
-**EMvidence Data Acquiring Application**
+# EMvidence Data Acquiring Application
 
-*This software application is tailored for forensic purposes, enabling the acquisition of Electromagnetic (EM) data from the HackRF One device. With a focus on forensic investigations, it provides a reliable platform for collecting EM signals for analysis and evidence gathering.*
+This software application is designed for forensic purposes, enabling the acquisition of Electromagnetic (EM) data from the [HackRF One](https://greatscottgadgets.com/hackrf/one/) device. Tailored for forensic investigations, it provides a reliable platform for collecting EM signals for analysis and evidence gathering.
 
-**Installation Instructions:**
+## Features
 
+- Captures EM data using the HackRF One device.
+- Optimized for forensic use cases.
+- Supports both Windows and Linux operating systems.
 
-**Windows:**
-1. **Pre-requisites:**
-   - Install Miniconda on your device. You can download it from [here](https://docs.anaconda.com/free/miniconda/).
-   - Ensure that Conda is added to your PATH variables.
+## Prerequisites
 
-2. **Installation:**
-   - Clone this repository using git.
-   - Run the `install.bat` file.
+Before installing the application, ensure the following requirements are met based on your operating system:
 
-3. **Executing the Application:**
-   - Run the `run.bat` file.
+### Windows
 
-**Linux:**
-1. **Pre-requisites:**
-   - Ensure Python3 and GNURadio library packages are installed on your system.
+- [Miniconda](https://docs.anaconda.com/free/miniconda/) installed.
+- Conda added to your system PATH environment variables.
 
-2. **Installation:**
-   - Clone this repository using git.
-   - Run the `install.sh` file.
+### Linux
 
-3. **Executing the Application:**
-   - Run either the `run.sh` file or execute `Python3 main.py`.
+- [Python 3](https://www.python.org/downloads/) installed.
+- [GNURadio](https://www.gnuradio.org/) library packages installed.
 
-This README provides guidance for installing and executing the EMvidence Data Acquiring Application on both Windows and Linux operating systems.
+## Installation
+
+Follow these steps to install the application:
+
+### Windows
+
+1. Clone the repository.
+2. Run the `run.bat` file.
+
+### Linux
+
+1. Clone the repository.
+2. Run the Installer
+
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+3. Execute the application
+
+   - Execute the script:
+
+   ```bash
+   chmod +x run.sh
+   ./run.sh
+   ```
+
+   - Or run directly: python3 main.py
