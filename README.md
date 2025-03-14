@@ -50,4 +50,4 @@ chmod +x install.sh
    ./run.sh
    ```
 
-   - Or run directly: python3 main.py
+   - Or run directly: `python3 main.py`
